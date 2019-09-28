@@ -32,18 +32,18 @@ class WlDataRawLoader:
         with open(report_destination, 'w', encoding='utf-8') as json_file:
             json.dump(self.report, json_file, indent=2, ensure_ascii=False)
             
-class WlDataRawPreprocessor:
+class WlDataPreprocessor:
     def __init__(self, raw_data_location):
-        self.raw_data = pd.read_csv(raw_data_location)
+        self.raw_data = pd.read_csv(raw_data_location, low_memory=False)
         self.preprocessing_report = {}
     def preprocess(self):
-        self.preprocessing_report['initial_count'] = self.raw_data.count()
+        self.preprocessing_report['initial_count'] = int(self.raw_data.SS.count())
 
         self.data = self.raw_data.dropna()
-        self.preprocessing_report['na_dropped'] = self.preprocessing_report['initial_count'] - self.data.count()
+        self.preprocessing_report['na_dropped'] = self.preprocessing_report['initial_count'] - int(self.data.SS.count())
         
         self.data = self.data.drop_duplicates()
-        self.preprocessing_report['duplicates_dropped'] = self.preprocessing_report['initial_count'] - self.preprocessing_report['na_dropped'] - self.data.count()
+        self.preprocessing_report['duplicates_dropped'] = self.preprocessing_report['initial_count'] - self.preprocessing_report['na_dropped'] - int(self.data.SS.count())
     def generate_report(self,preprocessing_report_destination, report_destination):
         self.report = self.data.SS.value_counts().to_dict()
         self.report['total_count'] = int(self.data.SS.count())
@@ -51,3 +51,16 @@ class WlDataRawPreprocessor:
             json.dump(self.report, json_file, indent=2, ensure_ascii=False)
         with open(preprocessing_report_destination, 'w', encoding='utf-8') as json_file:
             json.dump(self.preprocessing_report, json_file, indent=2, ensure_ascii=False)
+
+class PsoriasisLabeler:
+    def __init__(self, preprocessed_data_location):
+        self.preprocessed_data = pd.read_csv(preprocessed_data_location, low_memory=False)
+        self.preprocessed_data['F_ENTRADA'] = pd.to_datetime(self.preprocessed_data['F_ENTRADA'], errors='coerce')
+        self.preprocessed_data['age'] = self.preprocessed_data['age'].astype(int)
+    def label_psoriasis(self, pattern=r'p?[sz]oriasis'):
+        self.labeled_data = self.preprocessed_data.copy()
+        self.labeled_data['psoriasis'] = False
+        self.labeled_data.loc[self.labeled_data['SOSPECHA_DIAG'].str.contains(pattern), 'psoriasis'] = True
+    def compute_distribution(self):
+        self.psoriasis = self.labeled_data[self.labeled_data.psoriasis == True]
+        self.psoriasis_summary = self.psoriasis.groupby([self.psoriasis.F_ENTRADA.dt.year,self.psoriasis.age,self.psoriasis.SS]).size().to_frame('cases').reset_index()
