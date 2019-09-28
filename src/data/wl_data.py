@@ -25,7 +25,7 @@ class WlDataRawLoader:
             current.loc[current['SEXO'].str.contains(r'(2|FEMENINO|Mujer)'), 'SEXO'] = 'f'
             current.loc[current['SEXO'].str.contains(r'^(m|f)$') == False, 'SEXO'] = np.nan
             self.data = self.data.append(current)
-        self.data = self.data[['FECHA_NAC', 'F_ENTRADA', 'SEXO', 'SOSPECHA_DIAG', 'SS']]
+        self.data = self.data[['FECHA_NAC', 'F_ENTRADA', 'age', 'SEXO', 'SOSPECHA_DIAG', 'SS']]
     def generate_report(self,report_destination):
         self.report = self.data.SS.value_counts().to_dict()
         self.report['total_count'] = int(self.data.SS.count())
