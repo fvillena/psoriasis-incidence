@@ -12,7 +12,8 @@ class WlDataRawLoader:
         for filename in self.filenames:
             print(filename)
             SS = re.search(r'SS(\w+)\.',filename).group(1)
-            current = pd.read_csv(filename, low_memory=True)
+            current = pd.read_csv(filename, low_memory=False)
+            current = current[['FECHA_NAC', 'F_ENTRADA', 'PRESTA_EST', 'SEXO', 'SOSPECHA_DIAG', 'CONFIR_DIAG']]
             current['SS'] = SS
             self.data = self.data.append(current)
     def generate_report(self,report_destination):
