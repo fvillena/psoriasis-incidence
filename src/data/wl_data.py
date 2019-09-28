@@ -25,7 +25,7 @@ class WlDataRawLoader:
             current.loc[current['SEXO'].str.contains(r'(2|FEMENINO|Mujer)'), 'SEXO'] = 'f'
             current.loc[current['SEXO'].str.contains(r'^(m|f)$') == False, 'SEXO'] = np.nan
             self.data = self.data.append(current)
-        self.data = self.data[['FECHA_NAC', 'F_ENTRADA', 'SEXO', 'SOSPECHA_DIAG']]
+        self.data = self.data[['FECHA_NAC', 'F_ENTRADA', 'SEXO', 'SOSPECHA_DIAG', 'SS']]
     def generate_report(self,report_destination):
         self.report = self.data.SS.value_counts().to_dict()
         self.report['total_count'] = int(self.data.SS.count())
@@ -49,5 +49,5 @@ class WlDataRawPreprocessor:
         self.report['total_count'] = int(self.data.SS.count())
         with open(report_destination, 'w', encoding='utf-8') as json_file:
             json.dump(self.report, json_file, indent=2, ensure_ascii=False)
-        with open(report_destination, 'w', encoding='utf-8') as json_file:
-            json.dump(self.report, json_file, indent=2, ensure_ascii=False)
+        with open(preprocessing_report_destination, 'w', encoding='utf-8') as json_file:
+            json.dump(self.preprocessing_report, json_file, indent=2, ensure_ascii=False)
