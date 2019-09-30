@@ -63,4 +63,4 @@ class PsoriasisLabeler:
         self.labeled_data.loc[self.labeled_data['SOSPECHA_DIAG'].str.contains(pattern), 'psoriasis'] = True
     def compute_distribution(self):
         self.psoriasis = self.labeled_data[self.labeled_data.psoriasis == True]
-        self.psoriasis_summary = self.psoriasis.groupby([self.psoriasis.F_ENTRADA.dt.year,self.psoriasis.age,self.psoriasis.SS]).size().to_frame('cases').reset_index()
+        self.psoriasis_summary = self.psoriasis.groupby([self.psoriasis.F_ENTRADA.dt.year,self.psoriasis.age,self.psoriasis.SEXO,self.psoriasis.SS]).size().to_frame('cases').reset_index()
