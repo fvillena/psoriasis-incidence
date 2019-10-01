@@ -1,7 +1,7 @@
 import json
 from src.data.wl_data import WlDataRawLoader
 from src.data.wl_data import WlDataPreprocessor
-from src.data.wl_data import PsoriasisLabeler
+from src.data.psoriasis_data import PsoriasisLabeler
 
 raw_data_loader = WlDataRawLoader('data/raw/')
 raw_data_loader.load_files()
