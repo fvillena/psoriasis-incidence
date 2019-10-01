@@ -17,8 +17,8 @@ class WlDataRawLoader:
             current = current[['FECHA_NAC', 'F_ENTRADA', 'PRESTA_EST', 'SEXO', 'SOSPECHA_DIAG', 'CONFIR_DIAG']]
             current['SS'] = SS
             current['SOSPECHA_DIAG'] = current['SOSPECHA_DIAG'].map(str) + " " + current['CONFIR_DIAG'].map(str)
-            current['FECHA_NAC'] = pd.to_datetime(current['FECHA_NAC'], errors='coerce')
-            current['F_ENTRADA'] = pd.to_datetime(current['F_ENTRADA'], errors='coerce')
+            current['FECHA_NAC'] = pd.to_datetime(current['FECHA_NAC'], errors='coerce', infer_datetime_format=True)
+            current['F_ENTRADA'] = pd.to_datetime(current['F_ENTRADA'], errors='coerce', infer_datetime_format=True)
             current['age'] = (current['F_ENTRADA'] - current['FECHA_NAC'])/datetime.timedelta(days=365)
             current["SEXO"] = current["SEXO"].map(str)
             current.loc[current['SEXO'].str.contains(r'(1|MASCULINO|Hombre)'), 'SEXO'] = 'm'
