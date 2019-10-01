@@ -17,6 +17,7 @@ class WlDataRawLoader:
             current = current[['FECHA_NAC', 'F_ENTRADA', 'PRESTA_EST', 'SEXO', 'SOSPECHA_DIAG', 'CONFIR_DIAG']]
             current['SS'] = SS
             current['SOSPECHA_DIAG'] = current['SOSPECHA_DIAG'].map(str) + " " + current['CONFIR_DIAG'].map(str)
+            current['SOSPECHA_DIAG'] = current['SOSPECHA_DIAG'].str.lower()
             current['FECHA_NAC'] = pd.to_datetime(current['FECHA_NAC'], errors='coerce',dayfirst=True, infer_datetime_format=True)
             current['F_ENTRADA'] = pd.to_datetime(current['F_ENTRADA'], errors='coerce',dayfirst=True, infer_datetime_format=True)
             current['age'] = (current['F_ENTRADA'] - current['FECHA_NAC'])/datetime.timedelta(days=365)
@@ -57,7 +58,7 @@ class PsoriasisLabeler:
         self.preprocessed_data = pd.read_csv(preprocessed_data_location, low_memory=False)
         self.preprocessed_data['F_ENTRADA'] = pd.to_datetime(self.preprocessed_data['F_ENTRADA'], errors='coerce')
         self.preprocessed_data['age'] = self.preprocessed_data['age'].astype(int)
-    def label_psoriasis(self, pattern=r'p?[sz]oriasis'):
+    def label_psoriasis(self, pattern=r'oriasi'):
         self.labeled_data = self.preprocessed_data.copy()
         self.labeled_data['psoriasis'] = False
         self.labeled_data.loc[self.labeled_data['SOSPECHA_DIAG'].str.contains(pattern), 'psoriasis'] = True
